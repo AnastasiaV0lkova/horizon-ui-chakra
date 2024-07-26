@@ -29,6 +29,7 @@ import routes from 'routes';
 import { logout } from "../../store/authSlice.js";
 import { useDispatch } from 'react-redux';
 import { clearThumbnails } from '../../store/thumbnailsSlice';
+import { useNavigate } from "react-router";
 export default function HeaderLinks(props) {
   const { secondary } = props;
   const { colorMode, toggleColorMode } = useColorMode();
@@ -47,6 +48,15 @@ export default function HeaderLinks(props) {
   );
   const borderButton = useColorModeValue('secondaryGray.500', 'whiteAlpha.200');
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+
+  const logoutAction = () => {
+    dispatch(logout()); 
+    dispatch(clearThumbnails())
+    navigate(`/`);
+  }
+
   return (
     <Flex
       w={{ sm: '100%', md: 'auto' }}
@@ -295,7 +305,7 @@ export default function HeaderLinks(props) {
               <Text fontSize="sm">Newsletter Settings</Text>
             </MenuItem>
             <MenuItem
-              onClick={() => {dispatch(logout()); dispatch(clearThumbnails()) }}
+              onClick={logoutAction}
               _hover={{ bg: 'none' }}
               _focus={{ bg: 'none' }}
               color="red.400"
