@@ -26,6 +26,9 @@ import { MdNotificationsNone, MdInfoOutline } from 'react-icons/md';
 import { IoMdMoon, IoMdSunny } from 'react-icons/io';
 import { FaEthereum } from 'react-icons/fa';
 import routes from 'routes';
+import { logout } from "../../store/authSlice.js";
+import { useDispatch } from 'react-redux';
+import { clearThumbnails } from '../../store/thumbnailsSlice';
 export default function HeaderLinks(props) {
   const { secondary } = props;
   const { colorMode, toggleColorMode } = useColorMode();
@@ -43,6 +46,7 @@ export default function HeaderLinks(props) {
     '14px 17px 40px 4px rgba(112, 144, 176, 0.06)',
   );
   const borderButton = useColorModeValue('secondaryGray.500', 'whiteAlpha.200');
+  const dispatch = useDispatch();
   return (
     <Flex
       w={{ sm: '100%', md: 'auto' }}
@@ -291,6 +295,7 @@ export default function HeaderLinks(props) {
               <Text fontSize="sm">Newsletter Settings</Text>
             </MenuItem>
             <MenuItem
+              onClick={() => {dispatch(logout()); dispatch(clearThumbnails()) }}
               _hover={{ bg: 'none' }}
               _focus={{ bg: 'none' }}
               color="red.400"

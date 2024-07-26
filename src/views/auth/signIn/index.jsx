@@ -47,6 +47,14 @@ import illustration from "assets/img/auth/auth.png";
 import { FcGoogle } from "react-icons/fc";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
+import { useDispatch } from "react-redux";
+import { login } from "../../../store/authSlice.js";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import {
+  Alert,
+  AlertIcon,
+} from '@chakra-ui/react';
 
 function SignIn() {
   // Chakra color mode
@@ -67,6 +75,65 @@ function SignIn() {
   );
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (isSubmitted) {
+      if (!email.trim()) {
+        setEmailError('Email cannot be empty');
+      } else if (!emailRegex.test(email)) {
+        setEmailError('Enter a valid email address');
+      } else {
+        setEmailError('');
+    }
+  }
+  }, [email]);
+
+  useEffect(() => {
+    if (isSubmitted) {
+      if (!password.trim()) {
+        setPasswordError('Password cannot be empty');
+      } else if (password.length < 8) {
+        setPasswordError('Password must contain at least 8 characters');
+      } else {
+        setPasswordError('');
+      }
+    }
+  }, [password]);
+
+  const handleLogin = () => {
+    setIsSubmitted(true);
+    setEmailError('');
+    setPasswordError('');
+
+    let hasError = false;
+
+    if (!email.trim()) {
+      setEmailError('Email cannot be empty');
+      hasError = true;
+    }
+
+    if (!password.trim()) {
+      setPasswordError('Password cannot be empty');
+      hasError = true;
+    }
+
+    if (hasError) return;
+    dispatch(login({ email, password }));
+    redirectToDashboard();
+  }; 
+
+  const redirectToDashboard = () => {
+    navigate(`/admin/default`);
+  }
+
   return (
     <DefaultAuth illustrationBackground={illustration} image={illustration}>
       <Flex
@@ -104,7 +171,7 @@ function SignIn() {
           mx={{ base: "auto", lg: "unset" }}
           me='auto'
           mb={{ base: "20px", md: "auto" }}>
-          <Button
+          {/* <Button
             fontSize='sm'
             me='0px'
             mb='26px'
@@ -126,7 +193,7 @@ function SignIn() {
               or
             </Text>
             <HSeparator />
-          </Flex>
+          </Flex> */}
           <FormControl>
             <FormLabel
               display='flex'
@@ -143,11 +210,21 @@ function SignIn() {
               fontSize='sm'
               ms={{ base: "0px", md: "0px" }}
               type='email'
+              value={email}
+              id="email"
+              onChange={(e) => setEmail(e.target.value)}
               placeholder='mail@simmmple.com'
-              mb='24px'
+              mb={emailError ? '5px' : '24px'}
               fontWeight='500'
               size='lg'
             />
+            {isSubmitted  && emailError && (
+              <Alert status="error" mb={4}>
+                <AlertIcon />
+                {emailError}
+              </Alert>
+            )}
+            {/* <Text fontSize='sm' color="red.300">{emailError}</Text>} */}
             <FormLabel
               ms='4px'
               fontSize='sm'
@@ -160,10 +237,13 @@ function SignIn() {
               <Input
                 isRequired={true}
                 fontSize='sm'
+                id="password"
                 placeholder='Min. 8 characters'
-                mb='24px'
+                mb={passwordError ? '5px' : '24px'}
                 size='lg'
                 type={show ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 variant='auth'
               />
               <InputRightElement display='flex' alignItems='center' mt='4px'>
@@ -175,7 +255,13 @@ function SignIn() {
                 />
               </InputRightElement>
             </InputGroup>
-            <Flex justifyContent='space-between' align='center' mb='24px'>
+            {isSubmitted  && passwordError && (
+              <Alert status="error" mb={4}>
+                <AlertIcon />
+                {passwordError}
+              </Alert>
+            )}
+            {/* <Flex justifyContent='space-between' align='center' mb='24px'>
               <FormControl display='flex' alignItems='center'>
                 <Checkbox
                   id='remember-login'
@@ -200,18 +286,20 @@ function SignIn() {
                   Forgot password?
                 </Text>
               </NavLink>
-            </Flex>
+            </Flex> */}
             <Button
+              onClick={handleLogin}
               fontSize='sm'
               variant='brand'
               fontWeight='500'
+              mt={'10px'}
               w='100%'
               h='50'
               mb='24px'>
               Sign In
             </Button>
           </FormControl>
-          <Flex
+          {/* <Flex
             flexDirection='column'
             justifyContent='center'
             alignItems='start'
@@ -229,7 +317,7 @@ function SignIn() {
                 </Text>
               </NavLink>
             </Text>
-          </Flex>
+          </Flex> */}
         </Flex>
       </Flex>
     </DefaultAuth>
