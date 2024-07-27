@@ -16,7 +16,7 @@
 3. **Running the Application:**:
    To start the application, use the following command:
    ```bash 
-      npm start
+      npm run start
    ```
    The application will be available at http://localhost:3000.
 
